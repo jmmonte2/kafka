@@ -1,3 +1,26 @@
+org.apache.kafka.admin.RemoteTopicCrudTest:
+- testCreateCompactedRemoteStorage
+- testCreateRemoteTopicWithCopyDisabledAndDeleteOnDisable
+- testCreateRemoteTopicWithInheritedLocalRetentionSize
+- testCreateRemoteTopicWithInheritedLocalRetentionTime
+- testCreateRemoteTopicWithInvalidRetentionSize
+- testCreateRemoteTopicWithInvalidRetentionTime
+- testCreateRemoteTopicWithValidRetentionSize
+- testCreateRemoteTopicWithValidRetentionTime
+- testCreateTopicRetentionBytesValidationWithRemoteCopyDisabled
+- testCreateTopicRetentionMsValidationWithRemoteCopyDisabled
+- testEnableRemoteLogOnExistingTopic
+- testEnableRemoteLogWhenSystemRemoteStorageIsDisabled
+- testTopicDeletion
+- testUpdateTopicConfigWithDisablingRemoteStorage
+- testUpdateTopicConfigWithDisablingRemoteStorageWithDeleteOnDisable
+- testUpdateTopicConfigWithInheritedLocalRetentionSize
+- testUpdateTopicConfigWithInheritedLocalRetentionTime
+- testUpdateTopicConfigWithValidRetentionSize
+- testUpdateTopicConfigWithValidRetentionTime
+org.apache.kafka.server.log.LogAppendTimeTest:
+- testProduceConsumeWithConfigOnBroker
+- testProduceConsumeWithConfigOnTopic
 org.apache.kafka.server.log.remote.metadata.storage.ClassLoaderAwareRemoteLogMetadataManagerTest:
 - testWithClassLoader
 org.apache.kafka.server.log.remote.metadata.storage.ConsumerTaskTest:
@@ -51,12 +74,14 @@ org.apache.kafka.server.log.remote.metadata.storage.RemoteLogSegmentLifecycleTes
 org.apache.kafka.server.log.remote.metadata.storage.TopicBasedRemoteLogMetadataManagerConfigTest:
 - testCommonProducerConsumerOverridesConfig
 - testValidConfig
+- verifyToStringRedactsSensitiveConfigurations
 org.apache.kafka.server.log.remote.metadata.storage.TopicBasedRemoteLogMetadataManagerMultipleSubscriptionsTest:
 - testMultiplePartitionSubscriptions
 org.apache.kafka.server.log.remote.metadata.storage.TopicBasedRemoteLogMetadataManagerRestartTest:
 - testRLMMAPIsAfterRestart
 org.apache.kafka.server.log.remote.metadata.storage.TopicBasedRemoteLogMetadataManagerTest:
 - testDoesTopicExist
+- testInitializationFailure
 - testNewPartitionUpdates
 - testRemoteLogSizeCalculationForUnknownTopicIdPartitionThrows
 - testRemoteLogSizeCalculationWithSegmentsHavingNonExistentEpochs
@@ -98,11 +123,92 @@ org.apache.kafka.server.log.remote.storage.RemoteLogManagerConfigTest:
 - testThreadPoolDefaults
 - testValidConfigs
 - testValidateEmptyStringConfig
+org.apache.kafka.server.log.remote.storage.RemoteLogManagerTest:
+- testBuildFilteredLeaderEpochMap
+- testCandidateLogSegmentsSkipsActiveSegment
+- testCandidateLogSegmentsSkipsSegmentsAfterLastStableOffset
+- testConfigure
+- testCopyLogSegmentToRemoteForStaleTopic
+- testCopyLogSegmentsToRemoteShouldCopyExpectedLogSegment
+- testCopyQuota
+- testCopyQuotaManagerConfig
+- testCopyThrottling
+- testCustomMetadataSizeExceedsLimit
+- testDeleteLogSegmentDueToRetentionSizeBreach
+- testDeleteLogSegmentDueToRetentionTimeBreach
+- testDeleteRetentionMsBeingCancelledBeforeSecondDelete
+- testDeleteRetentionMsBiggerThanTimeMs
+- testDeleteRetentionMsOnExpiredSegment
+- testDeletionOnOverlappingRetentionBreachedSegments
+- testDeletionOnRetentionBreachedSegments
+- testDeletionSkippedForSegmentsBeingCopied
+- testEpochEntriesAsByteBuffer
+- testFailedCopyShouldDeleteTheDanglingSegment
+- testFailedDeleteExpiredSegments
+- testFetchNextSegmentWithTxnIndex
+- testFetchOffsetByTimestampWithTieredStorageDoesNotFetchIndexWhenExistsLocally
+- testFetchQuotaManagerConfig
+- testFetchRemoteLogSegmentMetadata
+- testFindHighestRemoteOffset
+- testFindHighestRemoteOffsetOnEmptyRemoteStorage
+- testFindHighestRemoteOffsetWithUncleanLeaderElection
+- testFindLogStartOffset
+- testFindLogStartOffsetFallbackToLocalLogStartOffsetWhenRemoteIsEmpty
+- testFindNextSegmentWithTxnIndex
+- testFindNextSegmentWithTxnIndexTraversesNextEpoch
+- testFindOffsetByTimestamp
+- testFindOffsetByTimestampWithInvalidEpochSegments
+- testFindOffsetByTimestampWithSegmentNotReady
+- testGetClassLoaderAwareRemoteStorageManager
+- testGetLeaderEpochCheckpoint
+- testIdempotentClose
+- testLogStartOffsetUpdatedOnStartup
+- testMetricsUpdateOnCopyLogSegmentsFailure
+- testMonitorableRemoteLogStorageManager
+- testOnLeadershipChangeWillInvokeHandleLeaderOrFollowerPartitions
+- testRLMOpsWhenMetadataIsNotReady
+- testRLMShutdownDuringQuotaExceededScenario
+- testRLMTaskDoesNotUploadSegmentsWhenRemoteLogMetadataManagerIsNotInitialized
+- testReadForFirstBatchInLogCompaction
+- testReadForFirstBatchMoreThanMaxFetchBytes
+- testReadForMissingFirstBatchInRemote
+- testRemoteDeleteLagsOnRetentionBreachedSegments
+- testRemoteLogManagerRemoteMetrics
+- testRemoteLogManagerTasksAvgIdlePercentAndMetadataCountMetrics
+- testRemoteLogMetadataManagerWithEndpointConfig
+- testRemoteLogMetadataManagerWithEndpointConfigOverridden
+- testRemoteLogMetadataManagerWithUserDefinedConfigs
+- testRemoteLogSizeRetentionShouldFilterOutCopySegmentStartState
+- testRemoteLogTaskUpdateRemoteLogSegmentMetadataAfterLogDirChanged
+- testRemoteReadFetchDataInfo
+- testRemoteSegmentWithinLeaderEpochs
+- testRemoteSegmentWithinLeaderEpochsForOverlappingSegments
+- testRemoteSizeData
+- testRemoteSizeTime
+- testRemoteStorageManagerWithUserDefinedConfigs
+- testRemoveMetricsOnClose
+- testStopPartitionsWithDeletion
+- testStopPartitionsWithoutDeletion
+- testTierLagResetsToZeroOnBecomingFollower
+- testTopicIdCacheUpdates
+- testUpdateRemoteStorageReaderThreads
 org.apache.kafka.server.log.remote.storage.RemoteLogMetadataManagerTest:
 - testFetchSegments
 - testRemotePartitionDeletion
+org.apache.kafka.server.log.remote.storage.RemoteLogOffsetReaderTest:
+- testReadRemoteLog
+- testTaskQueueFullAndCancelTask
+- testThrowErrorOnFindOffsetByTimestamp
+org.apache.kafka.server.log.remote.storage.RemoteLogReaderTest:
+- testRemoteLogReaderWithError
+- testRemoteLogReaderWithoutError
 org.apache.kafka.server.log.remote.storage.RemoteTopicPartitionDirectoryTest:
 - testSubStr
+org.apache.kafka.server.purgatory.DelayedRemoteListOffsetsTest:
+- testPartialResponseWhenNotLeaderOrFollowerExceptionOnOnePartition
+- testResponseOnPartialError
+- testResponseOnRequestExpiration
+- testResponseOnSuccess
 org.apache.kafka.storage.internals.checkpoint.CleanShutdownFileHandlerTest:
 - testCleanShutdownFileBasic
 - testCleanShutdownFileCanParseWithUnknownFields
@@ -124,6 +230,52 @@ org.apache.kafka.storage.internals.checkpoint.PartitionMetadataFileTest:
 - testRead
 - testSetRecordWithDifferentTopicId
 - testSetRecordWithSameTopicId
+org.apache.kafka.storage.internals.log.BrokerCompressionTest:
+- testBrokerSideCompression
+org.apache.kafka.storage.internals.log.LocalLogTest:
+- testCreateAndDeleteSegment
+- testDeleteSegmentFilesAsync
+- testDeleteSegmentFilesSync
+- testFlushingNonExistentDir
+- testLogAppend
+- testLogCloseFailureWhenInMemoryBufferClosed
+- testLogCloseHandlers
+- testLogCloseHandlersIdempotent
+- testLogCloseIdempotent
+- testLogCloseSuccess
+- testLogDeleteDirName
+- testLogDeleteDirSuccessWhenEmptyAndFailureWhenNonEmpty
+- testLogDeleteSegmentsSuccess
+- testLogDirRenameToExistingDir
+- testLogDirRenameToNewDir
+- testLogFlush
+- testNewSegmentsAfterRoll
+- testNonActiveSegmentsFrom
+- testOffsetFromFile
+- testParseTopicPartitionName
+- testParseTopicPartitionNameForEmptyName
+- testParseTopicPartitionNameForExistingInvalidDir
+- testParseTopicPartitionNameForInvalidPartition
+- testParseTopicPartitionNameForMissingPartition
+- testParseTopicPartitionNameForMissingSeparator
+- testParseTopicPartitionNameForMissingTopic
+- testParseTopicPartitionNameForNull
+- testParseTopicPartitionNameWithPeriodForDeletedTopic
+- testRemoveAndDeleteSegmentsAsync
+- testRemoveAndDeleteSegmentsSync
+- testRollEmptyActiveSegment
+- testRollSegmentErrorWhenNextOffsetIsIllegal
+- testRollSegmentThatAlreadyExists
+- testTruncateFullyAndStartAt
+- testTruncateTo
+- testUpdateConfig
+- testWhenFetchOffsetHigherThanMaxOffset
+org.apache.kafka.storage.internals.log.LogManagerTest:
+- testIsStrayKraftMissingTopicId
+- testIsStrayKraftReplicaInImage
+- testIsStrayKraftReplicaInImageWithRemoteReplicas
+- testIsStrayKraftReplicaWithEmptyImage
+- testWaitForAllToComplete
 org.apache.kafka.storage.internals.log.LogOffsetMetadataTest:
 - testMessageOffsetOnly
 - testOnOlderSegment
@@ -139,7 +291,9 @@ org.apache.kafka.storage.internals.log.LogSegmentTest:
 - testDeleteIfExistsWithGetParentIsNull
 - testFindOffsetByTimestamp
 - testGetFirstBatchTimestamp
+- testIndexForMultipleBatchesInMemoryRecords
 - testNextOffsetCalculation
+- testNonMonotonicTimestampForMultipleBatchesInMemoryRecords
 - testReadAfterLast
 - testReadBeforeFirstOffset
 - testReadFromGap
@@ -216,7 +370,6 @@ org.apache.kafka.storage.internals.log.LogValidatorTest:
 - testRelativeOffsetAssignmentNonCompressedV2
 - testUnmatchedNumberOfRecords
 - testValidationOfBatchesWithNonSequentialInnerOffsets
-- testZStdCompressedWithUnavailableIBPVersion
 org.apache.kafka.storage.internals.log.OffsetIndexTest:
 - appendOutOfOrder
 - appendTooMany
@@ -291,6 +444,33 @@ org.apache.kafka.storage.internals.log.ProducerStateManagerTest:
 - testTxnFirstOffsetMetadataCached
 - testVerificationStateEntryExpiration
 - updateProducerTransactionState
+org.apache.kafka.storage.internals.log.RemoteIndexCacheTest:
+- shouldThrowErrorWhenAccessedAfterCacheClose
+- testCacheEntryExpiry
+- testCacheEntryIsDeletedOnRemoval
+- testCleanerThreadShutdown
+- testClearCacheAndIndexFilesWhenResizeCache
+- testClose
+- testCloseIsIdempotent
+- testConcurrentCacheDeletedFileExists
+- testConcurrentReadWriteAccessForCache
+- testConcurrentRemoveReadForCache1
+- testConcurrentRemoveReadForCache2
+- testCorrectnessForCacheAndIndexFilesWhenResizeCache
+- testCorruptCacheIndexFileExistsButNotInCache
+- testDeleteInvalidIndexFilesOnInit
+- testFetchIndexAccessibleWhenMarkedForCleanup
+- testFetchIndexForMissingTransactionIndex
+- testFetchIndexFromRemoteStorage
+- testIndexFileAlreadyExistOnDiskButNotInCache
+- testIndexFileNameAndLocationOnDisk
+- testMultipleIndexEntriesExecutionInCorruptException
+- testPositionForNonExistentEntry
+- testRSMReturnCorruptedIndexFile
+- testReloadCacheAfterClose
+- testRemoveItem
+- testRemoveMultipleItems
+- testRemoveNonExistentItem
 org.apache.kafka.storage.internals.log.TimeIndexTest:
 - testAppend
 - testEntry
@@ -318,6 +498,11 @@ org.apache.kafka.storage.internals.log.TransactionIndexTest:
 - testSanityCheck
 - testTruncate
 - testUpdateParentDir
+org.apache.kafka.storage.internals.log.UnifiedLogTest:
+- testOffsetFromProducerSnapshotFile
+org.apache.kafka.storage.internals.log.VerificationGuardTest:
+- testEqualsAndHashCode
+- testVerify
 org.apache.kafka.storage.internals.utils.ThrottlerTest:
 - testThrottleDesiredRate
 - testUpdateThrottleDesiredRate
@@ -361,6 +546,7 @@ org.apache.kafka.tiered.storage.integration.TransactionsWithTieredStoreTest:
 - testCommitTransactionTimeout
 - testConsecutivelyRunInitTransactions
 - testDelayedFetchIncludesAbortedTransaction
+- testEmptyAbortAfterCommit
 - testFailureToFenceEpoch
 - testFencingOnAddPartitions
 - testFencingOnCommit
@@ -372,5 +558,4 @@ org.apache.kafka.tiered.storage.integration.TransactionsWithTieredStoreTest:
 - testOffsetMetadataInSendOffsetsToTransaction
 - testReadCommittedConsumerShouldNotSeeUndecidedData
 - testSendOffsetsToTransactionTimeout
-- testSendOffsetsWithGroupId
 - testSendOffsetsWithGroupMetadata

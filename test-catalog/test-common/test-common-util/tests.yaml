@@ -1,0 +1,15 @@
+org.apache.kafka.common.test.junit.CatalogTestFilterTest:
+- testEmptyCatalog
+- testLoadCatalog
+- testMissingCatalog
+org.apache.kafka.common.test.junit.KafkaPostDiscoveryFilterTest:
+- testExcludeExistingNonFlaky
+- testExcludeFlaky
+- testExcludeFlakyAndNew
+- testExistingTestNonFlaky
+- testIncludeAutoQuarantinedAndFlaky
+- testIncludeAutoQuarantinedNoFlaky
+- testIncludeExistingFlaky
+- testNoCatalogRunFlakyTests
+- testNoCatalogRunMainTests
+- testNoCatalogRunNewTest

@@ -1,3 +1,6 @@
+org.apache.kafka.api.EndToEndClusterIdTest:
+- testEndToEndWithClassicProtocol
+- testEndToEndWithConsumerProtocol
 org.apache.kafka.network.RequestConvertToJsonTest:
 - testAllApiVersionsResponseHandled
 - testAllRequestTypesHandled
@@ -13,6 +16,8 @@ org.apache.kafka.network.SocketServerConfigsTest:
 - testListenerListToEndPointsWithOneEndpoint
 - testListenerListToEndPointsWithUnderscores
 - testListenerListToEndPointsWithWildcard
+org.apache.kafka.security.authorizer.AuthorizerUtilsTest:
+- testCreateAuthorizer
 org.apache.kafka.server.AssignmentTest:
 - testAssignmentForNonExistentPartitionIsNotValid
 - testAssignmentForNonExistentTopicIsNotValid
@@ -42,6 +47,24 @@ org.apache.kafka.server.AssignmentsManagerTest:
 - testStartAndShutdown
 - testSuccessfulAssignment
 - testUnSuccessfulRequestCausesRetransmission
+org.apache.kafka.server.BootstrapControllersIntegrationTest:
+- testAcls
+- testAclsByControllers
+- testAlterReassignmentsWithBootstrapControllers
+- testDescribeCluster
+- testDescribeClusterByControllers
+- testDescribeConfigs
+- testDescribeFeatures
+- testDescribeFeaturesByControllers
+- testDescribeMetadataQuorum
+- testDescribeMetadataQuorumByControllers
+- testIncrementalAlterConfigs
+- testIncrementalAlterConfigsByControllers
+- testPutBrokersInBootstrapControllersConfig
+- testPutControllersInBootstrapBrokersConfig
+- testUpdateFeatures
+- testUpdateFeaturesByControllers
+- testUsingBootstrapControllersOnUnsupportedAdminApi
 org.apache.kafka.server.BrokerFeaturesTest:
 - ensureDefaultSupportedFeaturesRangeMaxNotZero
 - testCompatibleFeatures
@@ -83,7 +106,18 @@ org.apache.kafka.server.ClientMetricsManagerTest:
 - testUpdateSubscriptionWithInvalidMetricsProperties
 - testUpdateSubscriptionWithNullProperties
 - testUpdateSubscriptionWithPropertiesDeletion
+org.apache.kafka.server.LogManagerIntegrationTest:
+- testRestartBrokerNoErrorIfMissingPartitionMetadata
+org.apache.kafka.server.MonitorablePluginsIntegrationTest:
+- testMonitorableServerPlugins
+org.apache.kafka.server.config.DelegationTokenManagerConfigsTest:
+- testDefaults
+- testInvalidProperty
+- testOverride
+org.apache.kafka.server.config.MinInSyncReplicasConfigTest:
+- testDefaultKafkaConfig
 org.apache.kafka.server.metrics.BrokerServerMetricsTest:
+- testIgnoredStaticVoters
 - testLastAppliedRecordOffset
 - testLastAppliedRecordTimestamp
 - testMetadataApplyErrorCount
@@ -105,8 +139,70 @@ org.apache.kafka.server.metrics.ClientMetricsInstanceTest:
 - testMaybeUpdateRequestTimestampValid
 org.apache.kafka.server.metrics.ClientMetricsReceiverPluginTest:
 - testExportMetrics
+org.apache.kafka.server.metrics.ForwardingManagerMetricsTest:
+- testMetricsNames
+- testQueueLength
+- testQueueTimeMs
+- testRemoteTimeMs
+- testTimeoutMs
 org.apache.kafka.server.metrics.LinuxIoMetricsCollectorTest:
 - testReadProcFile
 - testUnableToReadNonexistentProcFile
+org.apache.kafka.server.purgatory.DelayedFutureTest:
+- testDelayedFuture
 org.apache.kafka.server.quota.ThrottledChannelTest:
 - testThrottledChannelDelay
+org.apache.kafka.server.replica.ReplicaTest:
+- testFenceStaleUpdates
+- testInitialState
+- testIsCaughtUpWhenReplicaIsCaughtUpToLogEnd
+- testIsCaughtUpWhenReplicaIsNotCaughtUpToLogEnd
+- testResetReplicaStateWhenLeaderIsReelectedAndReplicaIsInSync
+- testResetReplicaStateWhenLeaderIsReelectedAndReplicaIsNotInSync
+- testResetReplicaStateWhenNewLeaderIsElectedAndReplicaIsInSync
+- testResetReplicaStateWhenNewLeaderIsElectedAndReplicaIsNotInSync
+- testUpdateFetchState
+org.apache.kafka.server.share.CachedSharePartitionTest:
+- testCachedSharePartitionEqualsAndHashCode
+org.apache.kafka.server.share.fetch.DelayedShareFetchKeyTest:
+- testDelayedShareFetchEqualsAndHashcode
+org.apache.kafka.server.share.fetch.PartitionMaxBytesStrategyTest:
+- testCheckValidArguments
+- testConstructor
+- testUniformStrategy
+org.apache.kafka.server.share.fetch.PartitionRotateStrategyTest:
+- testRoundRobinStrategy
+- testRoundRobinStrategyWithEmptyPartitions
+- testRoundRobinStrategyWithSpecialSessionEpochs
+org.apache.kafka.server.share.fetch.ShareFetchTest:
+- testDontCacheAnyData
+- testErrorInAllPartitions
+- testErrorInAllPartitionsWithMultipleTopicIdPartitions
+- testFilterErroneousTopicPartitions
+- testMaybeCompleteWithErroneousTopicPartitions
+- testMaybeCompleteWithException
+- testMaybeCompleteWithExceptionPartialFailure
+- testMaybeCompleteWithExceptionWithExistingErroneousTopicPartition
+- testMaybeCompleteWithPartialErroneousTopicPartitions
+org.apache.kafka.server.share.session.ShareSessionCacheTest:
+- testNoShareGroupListenerRegistered
+- testRemoveAllSessions
+- testRemoveConnection
+- testResizeCachedSessions
+- testShareGroupListenerEvents
+- testShareGroupListenerEventsMultipleGroups
+- testShareSessionCache
+org.apache.kafka.server.share.session.ShareSessionTest:
+- testPartitionsToLogString
+- testPartitionsToLogStringEmpty
+org.apache.kafka.server.util.SchedulerTest:
+- testMockSchedulerLocking
+- testMockSchedulerNonPeriodicTask
+- testMockSchedulerPeriodicTask
+- testNonPeriodicTask
+- testNonPeriodicTaskWhenPeriodIsZero
+- testPendingTaskSize
+- testPeriodicTask
+- testReentrantTaskInMockScheduler
+- testRestart
+- testUnscheduleProducerTask

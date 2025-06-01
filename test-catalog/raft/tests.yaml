@@ -77,6 +77,11 @@ org.apache.kafka.raft.EndpointsTest:
 - testToBeginQuorumEpochRequestWithEndpoint
 - testVotersRecordEndpointsWithEmptyEndpoint
 - testVotersRecordEndpointsWithEndpoint
+org.apache.kafka.raft.EpochElectionTest:
+- testOverWritingVote
+- testRecordGrantedVote
+- testRecordRejectedVote
+- testStateOnInitialization
 org.apache.kafka.raft.FileQuorumStateStoreTest:
 - testCantReadVersionQuorumState
 - testCreateAndClear
@@ -87,9 +92,12 @@ org.apache.kafka.raft.FileQuorumStateStoreTest:
 - testWriteReadVotedCandidate
 org.apache.kafka.raft.FollowerStateTest:
 - testFetchTimeoutExpiration
-- testGrantVote
+- testGrantStandardVote
+- testHasUpdatedLeader
 - testLeaderIdAndEndpoint
 - testMonotonicHighWatermark
+- testPreVoteAfterSuccessfulFetchFromLeader
+- testPreVoteIfHasNotFetchedFromLeaderYet
 org.apache.kafka.raft.KafkaNetworkChannelTest:
 - testFetchRequestDowngrade
 - testSendAndDisconnect
@@ -98,9 +106,43 @@ org.apache.kafka.raft.KafkaNetworkChannelTest:
 - testSendToBlackedOutDestination
 - testUnsupportedVersionError
 - testWakeupClientOnSend
+org.apache.kafka.raft.KafkaRaftClientClusterAuthTest:
+- testClusterAuthorizationFailedInBeginQuorumEpoch
+- testClusterAuthorizationFailedInEndQuorumEpoch
+- testClusterAuthorizationFailedInFetch
+- testClusterAuthorizationFailedInVote
 org.apache.kafka.raft.KafkaRaftClientDriverTest:
 - testShutdown
 - testUncaughtException
+org.apache.kafka.raft.KafkaRaftClientFetchTest:
+- testInvalidMemoryRecords
+- testRandomRecords
+- testReplicationOfHigherPartitionLeaderEpoch
+org.apache.kafka.raft.KafkaRaftClientPreVoteTest:
+- testFollowerGrantsPreVoteIfHasNotFetchedYet
+- testHandleInvalidPreVoteRequestWithOlderEpoch
+- testHandlePreVoteRequestAsCandidate
+- testHandlePreVoteRequestAsFollower
+- testHandlePreVoteRequestAsFollowerObserver
+- testHandlePreVoteRequestAsFollowerWithVotedCandidate
+- testHandlePreVoteRequestAsResigned
+- testHandlePreVoteRequestAsUnattachedObserver
+- testHandlePreVoteRequestAsUnattachedVoted
+- testHandlePreVoteRequestAsUnattachedWithLeader
+- testInvalidPreVoteRequest
+- testInvalidVoterReplicaPreVoteRequest
+- testLeaderAcceptPreVoteFromObserver
+- testLeaderRejectPreVoteRequestOnSameEpoch
+- testPreVoteNotSupportedByRemote
+- testPreVoteRequestClusterIdValidation
+- testPreVoteRequestTimeout
+- testPreVoteResponseIgnoredAfterBecomingFollower
+- testProspectiveLosesElectionHasLeaderButMissingEndpoint
+- testProspectiveReceivesBeginQuorumRequest
+- testProspectiveTransitionsToUnattachedOnElectionFailure
+- testProspectiveWithLeaderTransitionsToFollower
+- testProspectiveWithoutLeaderTransitionsToFollower
+- testRejectPreVoteIfRemoteLogIsNotUpToDate
 org.apache.kafka.raft.KafkaRaftClientReconfigTest:
 - testAddVoter
 - testAddVoterFailsWhenLosingLeadership
@@ -121,9 +163,16 @@ org.apache.kafka.raft.KafkaRaftClientReconfigTest:
 - testFollowerDoesNotRequestLeaderBootstrapSnapshot
 - testFollowerReadsKRaftBootstrapRecords
 - testFollowerSendsUpdateVoter
+- testFollowerSendsUpdateVoterAfterElectionWithKraftVersion0
+- testFollowerSendsUpdateVoterIfPendingFetchDuringTimeout
 - testFollowerSendsUpdateVoterWhenDifferent
+- testFollowerSendsUpdateVoterWithKraftVersion0
 - testHandleBeginQuorumRequestMoreEndpoints
+- testInvalidKRaftUpgradeVersion
+- testInvalidUpdateVoter
+- testKRaftUpgradeVersion
 - testLeaderDoesNotBootstrapRecordsWithKraftVersion0
+- testLeaderMetricsAreReset
 - testLeaderUpdatesVoter
 - testLeaderWritesBootstrapRecords
 - testObserverDiscoversLeaderWithUnknownVoters
@@ -141,6 +190,7 @@ org.apache.kafka.raft.KafkaRaftClientReconfigTest:
 - testRemoveVoterWithPendingRemoveVoter
 - testRemoveVoterWithoutFencedPreviousLeaders
 - testUpdateVoter
+- testUpdateVoterAfterKRaftVersionUpgrade
 - testUpdateVoterInvalidClusterId
 - testUpdateVoterNewEpoch
 - testUpdateVoterOldEpoch
@@ -198,16 +248,14 @@ org.apache.kafka.raft.KafkaRaftClientTest:
 - testAppendFailedWithRecordBatchTooLargeException
 - testBeginQuorumEpochHeartbeat
 - testBeginQuorumEpochRequestClusterIdValidation
+- testCandidateElectionTimeout
 - testCandidateIgnoreVoteRequestOnSameEpoch
+- testCandidateWaitsRestOfElectionTimeoutAfterElectionLoss
 - testCannotResignIfNotLeader
 - testCannotResignIfObserver
 - testCannotResignWithLargerEpochThanCurrentEpoch
 - testChannelWokenUpIfLingerTimeoutReachedDuringAppend
 - testChannelWokenUpIfLingerTimeoutReachedWithoutAppend
-- testClusterAuthorizationFailedInBeginQuorumEpoch
-- testClusterAuthorizationFailedInEndQuorumEpoch
-- testClusterAuthorizationFailedInFetch
-- testClusterAuthorizationFailedInVote
 - testDescribeQuorumNonLeader
 - testDescribeQuorumNonMonotonicFollowerFetch
 - testDescribeQuorumWithFollowers
@@ -222,11 +270,13 @@ org.apache.kafka.raft.KafkaRaftClientTest:
 - testEndQuorumIgnoredAsLeaderIfOlderEpoch
 - testEndQuorumStartsNewElectionImmediatelyIfFollowerUnattached
 - testFetchRequestClusterIdValidation
-- testFetchResponseIgnoredAfterBecomingCandidate
 - testFetchResponseIgnoredAfterBecomingFollowerOfDifferentLeader
+- testFetchResponseIgnoredAfterBecomingProspective
 - testFetchShouldBeTreatedAsLeaderAcknowledgement
-- testFollowerAsObserverDoesNotBecomeCandidateAfterFetchTimeout
+- testFollowerAsObserverDoesNotBecomeProspectiveAfterFetchTimeout
 - testFollowerGracefulShutdown
+- testFollowerLeaderRediscoveryAfterBrokerNotAvailableError
+- testFollowerLeaderRediscoveryAfterRequestTimeout
 - testFollowerLogReconciliation
 - testFollowerReplication
 - testGracefulShutdownSingleMemberQuorum
@@ -252,14 +302,20 @@ org.apache.kafka.raft.KafkaRaftClientTest:
 - testHandleVoteRequestAsFollowerWithElectedLeader
 - testHandleVoteRequestAsFollowerWithVotedCandidate
 - testHandleVoteRequestAsObserver
-- testInitializeAsCandidateAndBecomeLeader
+- testHandleVoteRequestAsProspective
+- testHandleVoteRequestAsProspectiveWithVotedCandidate
 - testInitializeAsCandidateAndBecomeLeaderQuorumOfThree
+- testInitializeAsCandidateAndOnlyVoter
 - testInitializeAsCandidateFromStateStore
+- testInitializeAsFollowerAndOnlyVoter
 - testInitializeAsFollowerEmptyLog
 - testInitializeAsFollowerNonEmptyLog
 - testInitializeAsLeaderFromStateStoreSingleMemberQuorum
-- testInitializeAsResignedAndBecomeCandidate
+- testInitializeAsOnlyVoterWithEmptyElectionState
+- testInitializeAsResignedAndOnlyVoter
+- testInitializeAsResignedAndUnableToContactQuorum
 - testInitializeAsResignedLeaderFromStateStore
+- testInitializeAsUnattachedAndBecomeLeader
 - testInitializeObserverNoPreviousState
 - testInitializeSingleMemberQuorum
 - testInvalidFetchRequest
@@ -281,8 +337,8 @@ org.apache.kafka.raft.KafkaRaftClientTest:
 - testNodeDirectoryId
 - testObserverFetchWithNoLocalId
 - testObserverGracefulShutdown
+- testObserverHandleRetryFetchToBootstrapServer
 - testObserverHandleRetryFetchToLeader
-- testObserverHandleRetryFetchtToBootstrapServer
 - testObserverLeaderRediscoveryAfterBrokerNotAvailableError
 - testObserverLeaderRediscoveryAfterRequestTimeout
 - testObserverQuorumDiscoveryFailure
@@ -296,13 +352,13 @@ org.apache.kafka.raft.KafkaRaftClientTest:
 - testReregistrationChangesListenerContext
 - testResignInOlderEpochIgnored
 - testResignWillCompleteFetchPurgatory
-- testRetryElection
 - testStaticVotersIgnoredWithBootstrapSnapshot
-- testUnattachedAsObserverDoesNotBecomeCandidateAfterElectionTimeout
+- testUnattachedAsObserverDoesNotBecomeProspectiveAfterElectionTimeout
+- testUnattachedAsVoterCanBecomeFollowerAfterFindingLeader
 - testVoteRequestClusterIdValidation
 - testVoteRequestTimeout
 - testVoteResponseIgnoredAfterBecomingFollower
-- testVoterBecomeCandidateAfterFetchTimeout
+- testVoterBecomeProspectiveAfterFetchTimeout
 org.apache.kafka.raft.LeaderStateTest:
 - testBeginQuorumEpochTimer
 - testCheckQuorum
@@ -314,7 +370,9 @@ org.apache.kafka.raft.LeaderStateTest:
 - testHighWatermarkDoesIncreaseFromNewVoter
 - testHighWatermarkDoesNotDecreaseFromNewVoter
 - testIdempotentEndOffsetUpdate
+- testInvalidMaybeAppendUpgradedKRaftVersion
 - testLeaderEndpoints
+- testMaybeAppendUpgradedKRaftVersion
 - testNonFollowerAcknowledgement
 - testNonMonotonicHighWatermarkUpdate
 - testNonMonotonicLocalEndOffsetUpdate
@@ -326,6 +384,7 @@ org.apache.kafka.raft.LeaderStateTest:
 - testUpdateHighWatermarkQuorumSizeTwo
 - testUpdateHighWatermarkRemovingFollowerFromVoterStates
 - testUpdateVotersFromNoDirectoryIdToDirectoryId
+- testVolatileVoters
 org.apache.kafka.raft.MockExpirationServiceTest:
 - testFailAfter
 org.apache.kafka.raft.MockLogTest:
@@ -336,6 +395,7 @@ org.apache.kafka.raft.MockLogTest:
 - testCreateExistingSnapshot
 - testCreateSnapshot
 - testCreateSnapshotBeforeLogStartOffset
+- testCreateSnapshotInMiddleOfBatch
 - testCreateSnapshotLaterThanHighWatermark
 - testCreateSnapshotMuchEarlierEpoch
 - testCreateSnapshotMuchLaterEpoch
@@ -346,8 +406,11 @@ org.apache.kafka.raft.MockLogTest:
 - testEmptyAppendNotAllowed
 - testEndOffsetForEpoch
 - testFailToIncreaseLogStartPastHighWatermark
+- testInvalidLeaderEpoch
+- testInvalidMemoryRecords
 - testMetadataValidation
 - testMonotonicEpochStartOffset
+- testRandomRecords
 - testReadMissingSnapshot
 - testReadOutOfRangeOffset
 - testReadRecords
@@ -374,68 +437,125 @@ org.apache.kafka.raft.MockLogTest:
 - testValidateOffsetLessThanOldestSnapshotOffset
 - testValidateUnknownEpochLessThanLastKnownGreaterThanOldestSnapshot
 - testValidateValidEpochAndOffset
+org.apache.kafka.raft.ProspectiveStateTest:
+- testCanChangePreVote
+- testCanGrantVoteWithDirectoryId
+- testCanGrantVoteWithoutDirectoryId
+- testCannotGrantOrRejectNonVoters
+- testConsecutiveGrant
+- testConsecutiveReject
+- testElectionState
+- testElectionTimeout
+- testGrantVote
+- testGrantVoteWithLeader
+- testGrantVoteWithVotedKey
+- testLeaderEndpoints
+- testSingleNodeQuorum
+- testThreeNodeQuorumVoteGranted
+- testThreeNodeQuorumVoteRejected
+- testTwoNodeQuorumVoteGranted
+- testTwoNodeQuorumVoteRejected
+org.apache.kafka.raft.QuorumConfigTest:
+- testIllegalConfig
 org.apache.kafka.raft.QuorumStateTest:
-- testAllStatesToUnattachedFailInSameEpoch
 - testCanBecomeFollowerOfNonVoter
 - testCandidateToAnyStateLowerEpoch
 - testCandidateToCandidate
-- testCandidateToFollower
+- testCandidateToFollowerHigherEpoch
+- testCandidateToFollowerSameEpoch
 - testCandidateToLeader
 - testCandidateToLeaderWithoutGrantedVote
+- testCandidateToProspective
 - testCandidateToResigned
-- testCandidateToUnattached
-- testCandidateToUnattachedVoted
-- testCannotFollowOrVoteForSelf
+- testCandidateToUnattachedHigherEpoch
+- testCandidateToUnattachedSameEpoch
+- testCannotFollowSelf
+- testCannotTransitionToFollowerWithNoLeaderEndpoint
 - testFollowerToAnyStateLowerEpoch
 - testFollowerToCandidate
 - testFollowerToFollowerHigherEpoch
 - testFollowerToFollowerSameEpoch
 - testFollowerToFollowerSameEpochAndMoreEndpoints
 - testFollowerToLeaderOrResigned
+- testFollowerToProspective
 - testFollowerToUnattachedHigherEpoch
 - testFollowerToUnattachedSameEpoch
 - testFollowerToUnattachedVotedHigherEpoch
-- testFollowerToUnattachedVotedSameEpoch
+- testFollowerVotedToFollowerHigherEpoch
+- testFollowerVotedToFollowerSameEpoch
+- testFollowerVotedToUnattachedHigherEpoch
+- testFollowerVotedToUnattachedSameEpoch
 - testHasRemoteLeader
 - testHighWatermarkRetained
 - testInitializeAsFollower
+- testInitializeAsOnlyVoter
 - testInitializeAsResignedCandidate
 - testInitializeAsResignedLeader
 - testInitializeAsUnattached
 - testInitializeAsUnattachedWhenMissingEndpoints
-- testInitializeAsVoted
+- testInitializeAsVotedNoLeader
 - testInitializePrimordialEpoch
+- testInitializeVotedAndLeaderAreDifferent
+- testInitializeVotedAndLeaderAreSame
 - testInitializeWithCorruptedStore
 - testInitializeWithEmptyLocalId
 - testLeaderToAnyStateLowerEpoch
 - testLeaderToCandidate
-- testLeaderToFollower
+- testLeaderToFollowerHigherEpoch
+- testLeaderToFollowerSameEpoch
 - testLeaderToLeader
+- testLeaderToProspective
 - testLeaderToResigned
-- testLeaderToUnattached
-- testLeaderToUnattachedVoted
+- testLeaderToUnattachedHigherEpoch
+- testLeaderToUnattachedSameEpoch
 - testNoLocalIdInitializationFailsIfElectionStateHasVotedCandidate
-- testObserverCannotBecomeCandidateOrLeader
+- testObserverFollowerToProspectiveOrCandidateOrLeaderOrResigned
 - testObserverFollowerToUnattached
-- testObserverFromUnattachedVotedToCandidate
+- testObserverUnattachedToCandidateOrLeaderOrResigned
 - testObserverUnattachedToFollower
-- testObserverWithIdCanVote
+- testObserverUnattachedToProspective
+- testObserverUnattachedToUnattachedVoted
+- testProspectiveToCandidate
+- testProspectiveToFollowerHigherEpoch
+- testProspectiveToFollowerSameEpoch
+- testProspectiveToLeaderOrResigned
+- testProspectiveToProspective
+- testProspectiveToUnattachedInHigherEpoch
+- testProspectiveToUnattachedInSameEpoch
+- testProspectiveToUnattachedVoted
+- testProspectiveToUnattachedWithLeaderInHigherEpoch
+- testProspectiveVotedToAndFromFollowerSameEpoch
+- testProspectiveVotedToCandidate
+- testProspectiveVotedToUnattachedInSameEpoch
+- testProspectiveVotedWithLeaderToUnattachedInSameEpoch
+- testProspectiveWithLeaderToCandidate
+- testProspectiveWithLeaderToFollowerHigherEpoch
+- testProspectiveWithLeaderToFollowerSameEpoch
+- testProspectiveWithLeaderToUnattachedInHigherEpoch
+- testProspectiveWithLeaderToUnattachedInSameEpoch
+- testProspectiveWithLeaderToUnattachedWithLeaderInHigherEpoch
+- testResignedToFollowerInSameEpoch
+- testResignedToUnattachedInHigherEpoch
+- testUnattachedCannotAddVotedStateForSelf
 - testUnattachedToAnyStateLowerEpoch
 - testUnattachedToCandidate
 - testUnattachedToFollowerHigherEpoch
 - testUnattachedToFollowerSameEpoch
 - testUnattachedToLeaderOrResigned
+- testUnattachedToProspective
 - testUnattachedToUnattached
-- testUnattachedVotedHigherEpoch
-- testUnattachedVotedSameEpoch
+- testUnattachedToUnattachedVotedHigherEpoch
+- testUnattachedToUnattachedVotedSameEpoch
 - testUnattachedVotedToAnyStateLowerEpoch
-- testUnattachedVotedToCandidate
+- testUnattachedVotedToCandidateOrLeaderOrResigned
 - testUnattachedVotedToFollowerHigherEpoch
 - testUnattachedVotedToFollowerSameEpoch
-- testUnattachedVotedToInvalidLeaderOrResigned
+- testUnattachedVotedToProspective
 - testUnattachedVotedToUnattachedHigherEpoch
 - testUnattachedVotedToUnattachedSameEpoch
-- testUnattachedVotedToUnattachedVotedSameEpoch
+- testUnattachedVotedToUnattachedVoted
+- testUnattachedWithLeaderNoEndpointToAndFromProspective
+- testUnattachedWithLeaderToProspective
 org.apache.kafka.raft.RaftEventSimulationTest:
 - canElectInitialLeader
 - canElectNewLeaderAfterOldLeaderFailure
@@ -444,8 +564,11 @@ org.apache.kafka.raft.RaftEventSimulationTest:
 - canMakeProgressIfMajorityIsReachable
 - canRecoverAfterAllNodesKilled
 - canRecoverFromSingleNodeCommittedDataLoss
+- leadershipAssignedOnlyOnceWithNetworkPartitionIfThereExistsMajority
+- leadershipWillNotChangeDuringNetworkPartitionIfMajorityStillReachable
 org.apache.kafka.raft.RaftUtilTest:
 - testErrorResponse
+- testFetchRequestV17Compatibility
 - testSingletonBeginQuorumEpochRequestForAllVersion
 - testSingletonBeginQuorumEpochResponseForAllVersion
 - testSingletonDescribeQuorumRequestForAllVersion
@@ -455,6 +578,7 @@ org.apache.kafka.raft.RaftUtilTest:
 - testSingletonFetchRequestForAllVersion
 - testSingletonFetchResponseForAllVersion
 - testSingletonFetchSnapshotRequestForAllVersion
+- testSingletonFetchSnapshotRequestV1Compatibility
 - testSingletonFetchSnapshotResponseForAllVersion
 - testSingletonVoteRequestForAllVersion
 - testSingletonVoteResponseForAllVersion
@@ -462,7 +586,7 @@ org.apache.kafka.raft.RequestManagerTest:
 - testAnyInflightRequestWithAnyRequest
 - testBackoffAfterFailure
 - testFindReadyWithInflightRequest
-- testFindReadyWithRequestTimedout
+- testFindReadyWithRequestTimedOut
 - testIgnoreUnexpectedResponse
 - testRequestTimeout
 - testRequestToBootstrapList
@@ -474,14 +598,10 @@ org.apache.kafka.raft.ResignedStateTest:
 - testNegativeScenarioAcknowledgeResignation
 - testResignedState
 org.apache.kafka.raft.UnattachedStateTest:
-- testElectionTimeout
-- testGrantVote
-- testLeaderEndpoints
-- testUnattachedWithLeader
-org.apache.kafka.raft.UnattachedStateWithVoteTest:
-- testCanGrantVoteWithDirectoryId
-- testCanGrantVoteWithoutDirectoryId
-- testElectionTimeout
+- testCanGrantVoteWithVotedKey
+- testElectionStateAndElectionTimeout
+- testGrantVoteWithLeader
+- testGrantVoteWithoutVotedKey
 - testLeaderEndpoints
 org.apache.kafka.raft.ValidOffsetAndEpochTest:
 - diverging
@@ -497,11 +617,13 @@ org.apache.kafka.raft.VoterSetTest:
 - testIsOnlyVoterInStandalone
 - testIsVoterWithDirectoryId
 - testIsVoterWithoutDirectoryId
-- testNonoverlappingMajority
+- testNonOverlappingMajority
 - testOverlappingMajority
 - testRecordRoundTrip
 - testRemoveVoter
+- testSupportsVersion
 - testUpdateVoter
+- testUpdateVoterIgnoringDirectoryId
 - testVoterIds
 - testVoterNode
 - testVoterNodeIsVoterWithDirectoryId
@@ -554,6 +676,8 @@ org.apache.kafka.raft.internals.KafkaRaftMetricsTest:
 - shouldRecordPollIdleRatio
 - shouldRecordRate
 - shouldRecordVoterQuorumState
+- testLeaderMetrics
+- testNumberOfVoters
 org.apache.kafka.raft.internals.MemoryBatchReaderTest:
 - testIteration
 org.apache.kafka.raft.internals.RecordsBatchReaderTest:

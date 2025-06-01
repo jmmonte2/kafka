@@ -24,27 +24,35 @@ org.apache.kafka.queue.KafkaEventQueueTest:
 - testShutdownBeforeDeferred
 - testSize
 - testTimeouts
-org.apache.kafka.security.PasswordEncoderTest:
-- testEncodeDecode
-- testEncodeDecodeAlgorithms
-- testEncoderConfigChange
-org.apache.kafka.server.common.FeaturesTest:
+org.apache.kafka.server.common.FeatureTest:
+- testDefaultLevelAllFeatures
 - testDefaultTestVersion
-- testDefaultValueAllFeatures
+- testDefaultVersionDependencyIsDefaultReady
 - testFromFeatureLevelAllFeatures
 - testInvalidValidateVersion
-- testLatestProductionMapsToLatestMetadataVersion
+- testLatestProductionDependencyIsProductionReady
+- testLatestProductionIsNotBehindLatestMetadataVersion
+- testLatestProductionIsOneOfFeatureValues
 - testUnstableTestVersion
 - testV0SupportedInEarliestMV
+- testValidateEligibleLeaderReplicasVersion
 - testValidateVersionAllFeatures
+- testValidateWithDefaultValueDependencyAheadOfItsDefaultLevel
+- testValidateWithDependencyNotProductionReady
+- testValidateWithLaggingLatestProduction
+- testValidateWithMVDependencyAheadOfBootstrapMV
+- testValidateWithMVDependencyNotProductionReady
+- testValidateWithNonExistentLatestProduction
 org.apache.kafka.server.common.FinalizedFeaturesTest:
 - testKRaftModeFeatures
-- testZkModeFeatures
+- testSetFinalizedLevel
 org.apache.kafka.server.common.KRaftVersionTest:
 - tesVotersRecordVersion
 - testBootstrapMetadataVersion
 - testFeatureLevel
 - testFromFeatureLevel
+- testIsAtLeast
+- testIsMoreThan
 - testKraftVersionRecordVersion
 - testQuorumStateVersion
 org.apache.kafka.server.common.MetadataVersionTest:
@@ -52,19 +60,12 @@ org.apache.kafka.server.common.MetadataVersionTest:
 - assertLatestProductionIsLessThanLatest
 - assertLatestProductionIsProduction
 - testDirectoryAssignmentSupported
+- testFeatureLevels
 - testFromVersionString
-- testGroupMetadataValueVersion
 - testIsDelegationTokenSupported
 - testIsElrSupported
-- testIsInControlledShutdownStateSupported
-- testKRaftFeatureLevelsAtAndAfter3_0_IV1
-- testKRaftFeatureLevelsBefore3_0_IV1
-- testKRaftVersions
 - testListOffsetsValueVersion
 - testMetadataChanged
-- testMinSupportedVersionFor
-- testOffsetCommitValueVersion
-- testOffsetCommitValueVersionWithExpiredTimestamp
 - testPartitionChangeRecordVersion
 - testPartitionRecordVersion
 - testPrevious
@@ -236,6 +237,71 @@ org.apache.kafka.server.quota.QuotaUtilsTest:
 - testThrottleTimeThrowsExceptionIfProvidedNonRateMetric
 org.apache.kafka.server.record.BrokerCompressionTypeTest:
 - testTargetCompressionType
+org.apache.kafka.server.share.persister.DefaultStatePersisterTest:
+- testDefaultPersisterClose
+- testDeleteStateResponseToResultFailedFuture
+- testDeleteStateResponseToResultPartialResults
+- testDeleteStateSuccess
+- testDeleteStateValidate
+- testInitializeStateResponseToResultFailedFuture
+- testInitializeStateResponseToResultPartialResults
+- testInitializeStateSuccess
+- testInitializeStateValidate
+- testReadStateResponseToResultFailedFuture
+- testReadStateResponseToResultPartialResults
+- testReadStateSuccess
+- testReadStateSummaryResponseToResultFailedFuture
+- testReadStateSummaryResponseToResultPartialResults
+- testReadStateSummarySuccess
+- testReadStateSummaryValidate
+- testReadStateValidate
+- testWriteStateResponseToResultFailedFuture
+- testWriteStateResponseToResultPartialResults
+- testWriteStateSuccess
+- testWriteStateValidate
+org.apache.kafka.server.share.persister.PersisterStateManagerTest:
+- testDeleteStateRequestBatchingWithCoordinatorNodeLookup
+- testDeleteStateRequestCoordinatorFoundOnRetry
+- testDeleteStateRequestCoordinatorFoundSuccessfully
+- testDeleteStateRequestFailedMaxRetriesExhausted
+- testDeleteStateRequestRetryWithNotCoordinatorSuccessfulOnRetry
+- testDeleteStateRequestWithCoordinatorNodeLookup
+- testDeleteStateRequestWithRetryAndCoordinatorNodeLookup
+- testFindCoordinatorAttemptsExhausted
+- testFindCoordinatorDisconnect
+- testFindCoordinatorFatalError
+- testFindCoordinatorNullResponse
+- testFindCoordinatorSuccess
+- testInitializeStateRequestBatchingWithCoordinatorNodeLookup
+- testInitializeStateRequestCoordinatorFoundOnRetry
+- testInitializeStateRequestCoordinatorFoundSuccessfully
+- testInitializeStateRequestFailedMaxRetriesExhausted
+- testInitializeStateRequestRetryWithNotCoordinatorSuccessfulOnRetry
+- testInitializeStateRequestWithCoordinatorNodeLookup
+- testInitializeStateRequestWithRetryAndCoordinatorNodeLookup
+- testNetworkErrorHandling
+- testPersisterStateManagerClose
+- testReadStateRequestCoordinatorFoundOnRetry
+- testReadStateRequestCoordinatorFoundSuccessfully
+- testReadStateRequestFailureMaxRetriesExhausted
+- testReadStateRequestIllegalStateCoordinatorFoundSuccessfully
+- testReadStateRequestRetryWithCoordinatorNodeLookup
+- testReadStateRequestRetryWithNotCoordinatorSuccessfulOnRetry
+- testReadStateRequestWithCoordinatorNodeLookup
+- testReadStateSummaryRequestCoordinatorFoundOnRetry
+- testReadStateSummaryRequestCoordinatorFoundSuccessfully
+- testReadStateSummaryRequestFailureMaxRetriesExhausted
+- testReadStateSummaryRequestIllegalStateCoordinatorFoundSuccessfully
+- testReadStateSummaryRequestRetryWithCoordinatorNodeLookup
+- testReadStateSummaryRequestRetryWithNotCoordinatorSuccessfulOnRetry
+- testReadStateSummaryRequestWithCoordinatorNodeLookup
+- testWriteStateRequestBatchingWithCoordinatorNodeLookup
+- testWriteStateRequestCoordinatorFoundOnRetry
+- testWriteStateRequestCoordinatorFoundSuccessfully
+- testWriteStateRequestFailedMaxRetriesExhausted
+- testWriteStateRequestRetryWithNotCoordinatorSuccessfulOnRetry
+- testWriteStateRequestWithCoordinatorNodeLookup
+- testWriteStateRequestWithRetryAndCoordinatorNodeLookup
 org.apache.kafka.server.util.CommandLineUtilsTest:
 - testInitializeBootstrapPropertiesWithBothBootstraps
 - testInitializeBootstrapPropertiesWithBrokerBootstrap
@@ -294,7 +360,6 @@ org.apache.kafka.server.util.JsonTest:
 - testJsonArrayIterator
 - testJsonObjectApply
 - testJsonObjectGet
-- testJsonObjectIterator
 - testJsonValueEquals
 - testJsonValueHashCode
 - testJsonValueToString
@@ -330,6 +395,8 @@ org.apache.kafka.timeline.SnapshotRegistryTest:
 - testCreateSnapshots
 - testDeleteSnapshotUpTo
 - testEmptyRegistry
+- testReset
+- testScrub
 org.apache.kafka.timeline.SnapshottableHashTableTest:
 - testAddAndRemove
 - testDeleteOnEmptyDeltaTable
